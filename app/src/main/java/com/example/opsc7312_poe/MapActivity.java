@@ -5,9 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.content.ContentProviderClient;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -53,7 +55,6 @@ public class MapActivity extends AppCompatActivity {
         locationRequest.setFastestInterval(5000);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        updateGPS();
 
         swtGPS.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,8 +68,8 @@ public class MapActivity extends AppCompatActivity {
                     txtSens.setText("Using Towers + WiFi");
                 }
             }
-
         });
+        updateGPS();
     }
 
     @Override
@@ -87,9 +88,11 @@ public class MapActivity extends AppCompatActivity {
     }
 
     private void updateGPS(){
+        //Toast.makeText(this, "Update GPS", Toast.LENGTH_SHORT).show();
         fusedLocationProvide = LocationServices.getFusedLocationProviderClient(MapActivity.this);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if (ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            //Toast.makeText(this, "Update GPS", Toast.LENGTH_SHORT).show();
             fusedLocationProvide.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
@@ -108,6 +111,7 @@ public class MapActivity extends AppCompatActivity {
         txtLat.setText(String.valueOf(location.getLatitude()));
         txtLon.setText(String.valueOf(location.getLongitude()));
         txtAcc.setText(String.valueOf(location.getAccuracy()));
+        Toast.makeText(this, "Update GPS", Toast.LENGTH_SHORT).show();
 
         if (location.hasAltitude()) {
             txtAlt.setText(String.valueOf(location.getAltitude()));
