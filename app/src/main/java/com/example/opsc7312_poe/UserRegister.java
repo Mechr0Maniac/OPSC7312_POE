@@ -38,13 +38,18 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
         banner.setOnClickListener(this);
 
         btnRegister =(Button) findViewById(R.id.btnRegister);
-        btnRegister.setOnClickListener(this);
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                registerUser();
+            }
+        });
 
         editRegEmail=(EditText) findViewById(R.id.edtRegEmail);
         editRegPass=(EditText) findViewById(R.id.edtRegPass);
         edtRegName=(EditText) findViewById(R.id.edtRegName);
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar2);
     }
 
 
@@ -55,11 +60,14 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
             case R.id.banner:
                 startActivity(new Intent(this, MainActivity.class));
                 break;
-            case R.id.btnRegister:
+            /*case R.id.btnRegister:
                 registerUser();
-                break;
+                break;*/
         }
     }
+
+
+
     private void registerUser(){
         String email=editRegEmail.getText().toString().trim();
         String password= editRegPass.getText().toString().trim();
