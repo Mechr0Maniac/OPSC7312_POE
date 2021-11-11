@@ -20,6 +20,8 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 public class MapActivity extends AppCompatActivity {
@@ -32,7 +34,7 @@ public class MapActivity extends AppCompatActivity {
 
     LocationRequest locationRequest;
 
-    FusedLocationProviderClient fusedLocationProvide;
+    FusedLocationProviderClient fusedLocationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,14 +91,26 @@ public class MapActivity extends AppCompatActivity {
 
     private void updateGPS(){
         //Toast.makeText(this, "Update GPS", Toast.LENGTH_SHORT).show();
-        fusedLocationProvide = LocationServices.getFusedLocationProviderClient(MapActivity.this);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapActivity.this);
 
         if (ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             //Toast.makeText(this, "Update GPS", Toast.LENGTH_SHORT).show();
-            fusedLocationProvide.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
                     updateUIValues(location);
+                }
+            });
+            fusedLocationProviderClient.getLastLocation().addOnFailureListener(this, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    displayFail();
+                }
+            });
+            fusedLocationProviderClient.getLastLocation().addOnCanceledListener(this, new OnCanceledListener() {
+                @Override
+                public void onCanceled() {
+                    displayCancel();
                 }
             });
         }
@@ -105,6 +119,14 @@ public class MapActivity extends AppCompatActivity {
                 requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, 99);
             }
         }
+    }
+
+    private void displayCancel() {
+        Toast.makeText(this, "CANCELLED", Toast.LENGTH_SHORT).show();
+    }
+
+    private void displayFail() {
+        Toast.makeText(this, "FAILED", Toast.LENGTH_SHORT).show();
     }
 
     private void updateUIValues(Location location) {
