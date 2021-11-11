@@ -10,6 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OPSC7312_POE">
         <activity
+            android:name=".MapActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UserRegister"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
