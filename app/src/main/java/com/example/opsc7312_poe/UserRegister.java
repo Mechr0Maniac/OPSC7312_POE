@@ -38,18 +38,20 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
         banner.setOnClickListener(this);
 
         btnRegister =(Button) findViewById(R.id.btnRegister);
-        btnRegister.setOnClickListener(this);
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                registerUser();
+            }
+        });
 
-        editRegEmail=(EditText) findViewById(R.id.edtUser);
-        editRegPass=(EditText) findViewById(R.id.edtPass);
+        editRegEmail=(EditText) findViewById(R.id.edtRegEmail);
+        editRegPass=(EditText) findViewById(R.id.edtRegPass);
         edtRegName=(EditText) findViewById(R.id.edtRegName);
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar2);
     }
 
-    private void RegisterNew(String email, String password){
-
-    }
 
     @Override
     public void onClick(View v) {
@@ -58,11 +60,14 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
             case R.id.banner:
                 startActivity(new Intent(this, MainActivity.class));
                 break;
-            case R.id.btnRegister:
+            /*case R.id.btnRegister:
                 registerUser();
-                break;
+                break;*/
         }
     }
+
+
+
     private void registerUser(){
         String email=editRegEmail.getText().toString().trim();
         String password= editRegPass.getText().toString().trim();
@@ -112,7 +117,7 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()){
-                                        Toast.makeText(UserRegister.this, "User has been Registered succesfully", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(UserRegister.this, "User has been Registered successfully", Toast.LENGTH_LONG).show();
                                         progressBar.setVisibility(View.GONE);
                                     }else{
                                         Toast.makeText(UserRegister.this, "Failed to register, please try again", Toast.LENGTH_LONG).show();

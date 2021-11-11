@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
                     startActivity(new Intent(MainActivity.this,MapActivity.class));
                 }else{
                     Toast.makeText(MainActivity.this, "Failed to Log in, recheck credentials", Toast.LENGTH_LONG).show();
+                    progressBar.setVisibility(View.GONE);
                 }
             }
         });
