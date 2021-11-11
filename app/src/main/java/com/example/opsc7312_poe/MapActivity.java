@@ -6,12 +6,14 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,10 +29,12 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MapActivity extends AppCompatActivity {
 
     TextView txtLat, txtLon, txtAcc, txtAlt, txtSpd, txtUp, txtAdd, txtSens;
+    private Button logout;
 
     Switch swtLocUp, swtGPS;
 
@@ -83,6 +87,16 @@ public class MapActivity extends AppCompatActivity {
                 }
             }
         };
+
+        logout=(Button) findViewById(R.id.logOut);
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(MapActivity.this,MainActivity.class));
+            }
+        });
 
         swtGPS.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,7 +193,7 @@ public class MapActivity extends AppCompatActivity {
         txtLat.setText(String.valueOf(location.getLatitude()));
         txtLon.setText(String.valueOf(location.getLongitude()));
         txtAcc.setText(String.valueOf(location.getAccuracy()));
-        Toast.makeText(this, "Update GPS", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Update GPS", Toast.LENGTH_SHORT).show();
 
         if (location.hasAltitude()) {
             txtAlt.setText(String.valueOf(location.getAltitude()));
@@ -194,4 +208,6 @@ public class MapActivity extends AppCompatActivity {
             txtSpd.setText("Alt not available");
         }
     }
+
+
 }

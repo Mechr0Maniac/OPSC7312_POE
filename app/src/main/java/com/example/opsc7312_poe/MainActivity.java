@@ -54,7 +54,8 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
                 break;
 
             case R.id.btnEnter:
-                userLogin();
+                //userLogin();
+                startActivity(new Intent(MainActivity.this,MapActivity.class));
                 break;
         }
     }
