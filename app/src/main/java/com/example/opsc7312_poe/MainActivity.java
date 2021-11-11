@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
 
         progressBar=(ProgressBar)  findViewById(R.id.progressBar);
 
-
+        mAuth=FirebaseAuth.getInstance();
 
     }
 

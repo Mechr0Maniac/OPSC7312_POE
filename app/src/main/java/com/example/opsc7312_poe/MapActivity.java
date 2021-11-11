@@ -6,12 +6,14 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,10 +25,12 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MapActivity extends AppCompatActivity {
 
     TextView txtLat, txtLon, txtAcc, txtAlt, txtSpd, txtUp, txtAdd, txtSens;
+    private Button logout;
 
     Switch swtLocUp, swtGPS;
 
@@ -56,6 +60,16 @@ public class MapActivity extends AppCompatActivity {
         locationRequest.setInterval(30000);
         locationRequest.setFastestInterval(5000);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        logout=(Button) findViewById(R.id.logOut);
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(MapActivity.this,MainActivity.class));
+            }
+        });
 
 
         swtGPS.setOnClickListener(new View.OnClickListener() {
