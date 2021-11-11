@@ -6,37 +6,38 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 
 public class MapActivity extends AppCompatActivity {
 
     TextView txtLat, txtLon, txtAcc, txtAlt, txtSpd, txtUp, txtAdd, txtSens;
-    private Button logout;
 
     Switch swtLocUp, swtGPS;
 
     boolean updateOn = false;
 
     LocationRequest locationRequest;
+    LocationCallback locationCallback;
 
     FusedLocationProviderClient fusedLocationProviderClient;
 
@@ -61,16 +62,27 @@ public class MapActivity extends AppCompatActivity {
         locationRequest.setFastestInterval(5000);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-        logout=(Button) findViewById(R.id.logOut);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(locationRequest);
+        LocationSettingsRequest locationSettingsRequest = builder.build();
 
-        logout.setOnClickListener(new View.OnClickListener() {
+        SettingsClient settingsClient = LocationServices.getSettingsClient(this);
+        settingsClient.checkLocationSettings(locationSettingsRequest);
+
+        locationCallback = new LocationCallback() {
             @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(MapActivity.this,MainActivity.class));
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                if (locationResult == null){
+                    return;
+                }
+                for (Location location : locationResult.getLocations()){
+                    if (location != null){
+                        updateUIValues(location);
+                    }
+                }
             }
-        });
-
+        };
 
         swtGPS.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,11 +117,19 @@ public class MapActivity extends AppCompatActivity {
 
     private void updateGPS(){
         //Toast.makeText(this, "Update GPS", Toast.LENGTH_SHORT).show();
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapActivity.this);
+        //fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapActivity.this);
+
 
         if (ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             //Toast.makeText(this, "Update GPS", Toast.LENGTH_SHORT).show();
-            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            LocationServices.getFusedLocationProviderClient(this).requestLocationUpdates(locationRequest, locationCallback, null);
+            /*fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    updateUIValues(location);
+                }
+            });
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
                     updateUIValues(location);
@@ -125,6 +145,18 @@ public class MapActivity extends AppCompatActivity {
                 @Override
                 public void onCanceled() {
                     displayCancel();
+                }
+            });*/
+            LocationServices.getFusedLocationProviderClient(this).getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    updateUIValues(location);
+                }
+            });
+            LocationServices.getFusedLocationProviderClient(this).getLastLocation().addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    displayFail();
                 }
             });
         }
