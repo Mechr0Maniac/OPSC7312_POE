@@ -40,16 +40,13 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
         btnRegister =(Button) findViewById(R.id.btnRegister);
         btnRegister.setOnClickListener(this);
 
-        editRegEmail=(EditText) findViewById(R.id.edtUser);
-        editRegPass=(EditText) findViewById(R.id.edtPass);
+        editRegEmail=(EditText) findViewById(R.id.edtRegEmail);
+        editRegPass=(EditText) findViewById(R.id.edtRegPass);
         edtRegName=(EditText) findViewById(R.id.edtRegName);
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
 
-    private void RegisterNew(String email, String password){
-
-    }
 
     @Override
     public void onClick(View v) {
@@ -112,7 +109,7 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()){
-                                        Toast.makeText(UserRegister.this, "User has been Registered succesfully", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(UserRegister.this, "User has been Registered successfully", Toast.LENGTH_LONG).show();
                                         progressBar.setVisibility(View.GONE);
                                     }else{
                                         Toast.makeText(UserRegister.this, "Failed to register, please try again", Toast.LENGTH_LONG).show();
