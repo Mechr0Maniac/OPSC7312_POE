@@ -9,6 +9,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
     private Button btnNewRegister,btnEnter;
     private EditText edtPass,edtUser;
     private ProgressBar progressBar;
+    private ImageView icon_image;
 
     private FirebaseAuth mAuth;
 
@@ -33,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements  View.OnClickList
 
         btnNewRegister =(Button) findViewById(R.id.btnNewRegister);
         btnNewRegister.setOnClickListener(this);
+
+        icon_image=(ImageView) findViewById(R.id.icon_image);
 
         btnEnter=(Button) findViewById(R.id.btnEnter);
         btnEnter.setOnClickListener(this);

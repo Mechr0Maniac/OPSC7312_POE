@@ -3,24 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#8d3bc8">
     <!-- tools:context=".StartScreen"-->
 
     <TextView
         android:id="@+id/txtLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="164dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="164dp"
-        android:text="Login"
+        android:layout_width="333dp"
+        android:layout_height="79dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="cursive"
+        android:text="Wondrous Places"
         android:textAlignment="center"
         android:textColor="#000000"
-        android:textSize="34sp"
+        android:textSize="48sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/icon_image" />
 
     <EditText
         android:id="@+id/edtPass"
@@ -31,12 +30,12 @@
         android:layout_marginEnd="101dp"
         android:ems="10"
         android:hint="Password"
+        android:importantForAutofill="no"
         android:inputType="textPassword"
         android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtPass"
-        android:importantForAutofill="no" />
+        app:layout_constraintTop_toBottomOf="@+id/txtPass" />
 
     <EditText
         android:id="@+id/edtUser"
@@ -57,9 +56,8 @@
         android:id="@+id/txtUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="103dp"
-        android:layout_marginTop="80dp"
-        android:layout_marginEnd="233dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="serif"
         android:text="Email"
         android:textColor="#000000"
         android:textSize="18sp"
@@ -71,27 +69,28 @@
         android:id="@+id/txtPass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="103dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="228dp"
+        android:layout_marginTop="12dp"
+        android:fontFamily="serif"
         android:text="Password"
         android:textColor="#000000"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtUser" />
 
     <Button
         android:id="@+id/btnEnter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="159dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="163dp"
+        android:layout_width="116dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="52dp"
         android:background="@color/black"
-        android:text="Enter"
+        android:fontFamily="serif"
+        android:text="Log In"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnNewRegister"
+        app:layout_constraintHorizontal_bias="0.936"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtPass" />
 
@@ -99,15 +98,14 @@
         android:id="@+id/btnNewRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="159dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="163dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="60dp"
         android:background="@color/black"
+        android:fontFamily="serif"
         android:text="Register"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnEnter" />
+        app:layout_constraintTop_toBottomOf="@+id/edtPass" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -119,6 +117,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/icon_image"
+        android:layout_width="236dp"
+        android:layout_height="197dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/icon_opsc" />
 
     <!-- <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar2"

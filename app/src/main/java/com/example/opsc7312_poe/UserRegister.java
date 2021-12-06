@@ -9,6 +9,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,9 +22,10 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class UserRegister extends AppCompatActivity implements View.OnClickListener {
 
-    private TextView btnRegister,banner;
+    private TextView btnRegister;
     private EditText editRegEmail, editRegPass,edtRegName;
     private ProgressBar progressBar;
+    private ImageView btnBack;
 
     private FirebaseAuth mAuth;
 
@@ -34,8 +36,10 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
 
         mAuth =FirebaseAuth.getInstance();
 
-        banner =(TextView) findViewById(R.id.banner);
-        banner.setOnClickListener(this);
+        btnBack=(ImageView) findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(this);
+
+
 
         btnRegister =(Button) findViewById(R.id.btnRegister);
         btnRegister.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +61,7 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
 
-            case R.id.banner:
+            case R.id.btnBack:
                 startActivity(new Intent(this, MainActivity.class));
                 break;
             /*case R.id.btnRegister:
