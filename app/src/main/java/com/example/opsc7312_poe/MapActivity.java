@@ -8,10 +8,13 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
@@ -31,14 +34,19 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.List;
+
 public class MapActivity extends AppCompatActivity {
 
-    TextView txtLat, txtLon, txtAcc, txtAlt, txtSpd, txtUp, txtAdd, txtSens;
-    private Button logout;
+    TextView txtLat, txtLon, txtAcc, txtAlt, txtSpd, txtUp, txtAdd, txtSens, txtWaypointCounts;
+    private Button logout, btnNewWaypoint, btnShowWaypoints, btnShowMap;
 
     Switch swtLocUp, swtGPS;
 
     boolean updateOn = false;
+
+    Location currLocation;
+    List<Location> savedLocations;
 
     LocationRequest locationRequest;
     LocationCallback locationCallback;
@@ -58,12 +66,16 @@ public class MapActivity extends AppCompatActivity {
         txtUp = findViewById(R.id.tv_updates);
         txtAdd = findViewById(R.id.tv_address);
         txtSens = findViewById(R.id.tv_sensor);
+        txtWaypointCounts = findViewById(R.id.txtCountOfCrumbs);
         swtGPS = findViewById(R.id.sw_gps);
         swtLocUp = findViewById(R.id.sw_locationsupdates);
+        btnNewWaypoint = findViewById(R.id.btnNewWayPoint);
+        btnShowWaypoints = findViewById(R.id.btnShowWaypoints);
+        btnShowMap = findViewById(R.id.btnShowMap);
 
         locationRequest = new LocationRequest();
-        locationRequest.setInterval(30000);
-        locationRequest.setFastestInterval(5000);
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(1000);
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
@@ -77,41 +89,100 @@ public class MapActivity extends AppCompatActivity {
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-                if (locationResult == null){
+                if (locationResult == null) {
                     return;
                 }
-                for (Location location : locationResult.getLocations()){
-                    if (location != null){
+                for (Location location : locationResult.getLocations()) {
+                    if (location != null) {
                         updateUIValues(location);
                     }
                 }
             }
         };
 
-        logout=(Button) findViewById(R.id.logOut);
+        logout = (Button) findViewById(R.id.logOut);
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(MapActivity.this,MainActivity.class));
+                startActivity(new Intent(MapActivity.this, MainActivity.class));
+            }
+        });
+
+        btnNewWaypoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MapInfo mapInfo = (MapInfo)getApplicationContext();
+                savedLocations = mapInfo.getMyLocations();
+                savedLocations.add(currLocation);
+            }
+        });
+
+        btnShowWaypoints.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapActivity.this, LandmarkList.class);
+                startActivity(intent);
+            }
+        });
+
+        btnShowMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapActivity.this, MapsActivity.class);
+                startActivity(intent);
             }
         });
 
         swtGPS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(swtGPS.isChecked()){
+                if (swtGPS.isChecked()) {
                     locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
                     txtSens.setText("Using GPS sensors");
-                }
-                else{
+                } else {
                     locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
                     txtSens.setText("Using Towers + WiFi");
                 }
             }
         });
+
+        swtLocUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (swtLocUp.isChecked()) {
+                    doLocUpdates();
+                } else {
+                    endLocUpdates();
+                }
+            }
+        });
+
+
         updateGPS();
+    }
+
+    private void doLocUpdates() {
+        txtUp.setText("Location is updating");
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "Permission not granted", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, null);
+        //LocationServices.getFusedLocationProviderClient(this).requestLocationUpdates(locationRequest, locationCallback, null);
+        updateGPS();
+    }
+
+    private void endLocUpdates() {
+        txtUp.setText("Tracking ended");
+        txtLat.setText("Not tracking location");
+        txtSpd.setText("Not tracking location");
+        txtAcc.setText("Not tracking location");
+        txtAlt.setText("Not tracking location");
+        txtLon.setText("Not tracking location");
+        txtAdd.setText("Not tracking location");
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
     }
 
     @Override
@@ -131,22 +202,17 @@ public class MapActivity extends AppCompatActivity {
 
     private void updateGPS(){
         //Toast.makeText(this, "Update GPS", Toast.LENGTH_SHORT).show();
-        //fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapActivity.this);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapActivity.this);
 
 
         if (ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             //Toast.makeText(this, "Update GPS", Toast.LENGTH_SHORT).show();
             LocationServices.getFusedLocationProviderClient(this).requestLocationUpdates(locationRequest, locationCallback, null);
-            /*fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
                     updateUIValues(location);
-                }
-            });
-            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    updateUIValues(location);
+                    currLocation = location;
                 }
             });
             fusedLocationProviderClient.getLastLocation().addOnFailureListener(this, new OnFailureListener() {
@@ -159,18 +225,6 @@ public class MapActivity extends AppCompatActivity {
                 @Override
                 public void onCanceled() {
                     displayCancel();
-                }
-            });*/
-            LocationServices.getFusedLocationProviderClient(this).getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    updateUIValues(location);
-                }
-            });
-            LocationServices.getFusedLocationProviderClient(this).getLastLocation().addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    displayFail();
                 }
             });
         }
@@ -205,8 +259,22 @@ public class MapActivity extends AppCompatActivity {
             txtSpd.setText(String.valueOf(location.getSpeed()));
         }
         else {
-            txtSpd.setText("Alt not available");
+            txtSpd.setText("Speed not available");
         }
+
+        Geocoder geocoder = new Geocoder(this);
+        try {
+            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(), 1);
+            txtAdd.setText(addresses.get(0).getAddressLine(0));
+        }
+        catch (Exception e){
+            txtAdd.setText("Address not found");
+        }
+
+        MapInfo mapInfo = (MapInfo)getApplicationContext();
+        savedLocations = mapInfo.getMyLocations();
+
+        txtWaypointCounts.setText(Integer.toString(savedLocations.size()));
     }
 
 

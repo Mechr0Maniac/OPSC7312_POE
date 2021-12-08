@@ -18,7 +18,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class UserRegister extends AppCompatActivity implements View.OnClickListener {
 
@@ -28,6 +32,9 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
     private ImageView btnBack;
 
     private FirebaseAuth mAuth;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
+    private String value;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +42,11 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_user_register);
 
         mAuth =FirebaseAuth.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("Users");
 
         btnBack=(ImageView) findViewById(R.id.btnBack);
         btnBack.setOnClickListener(this);
-
-
 
         btnRegister =(Button) findViewById(R.id.btnRegister);
         btnRegister.setOnClickListener(new View.OnClickListener() {
@@ -57,6 +64,7 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
     }
 
 
+
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -64,13 +72,15 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
             case R.id.btnBack:
                 startActivity(new Intent(this, MainActivity.class));
                 break;
-            /*case R.id.btnRegister:
+            case R.id.btnRegister:
                 registerUser();
-                break;*/
+                break;
         }
     }
 
-
+    private void successfulEnter(){
+        startActivity( new Intent(this, MainActivity.class));
+    }
 
     private void registerUser(){
         String email=editRegEmail.getText().toString().trim();
@@ -109,26 +119,28 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
         progressBar.setVisibility(View.VISIBLE);
 
         mAuth.createUserWithEmailAndPassword(email,password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
                             User user =new User(name,email);
 
-                            FirebaseDatabase.getInstance().getReference("Users")
+                            /*FirebaseDatabase.getInstance().getReference("Users")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()){
-                                        Toast.makeText(UserRegister.this, "User has been Registered successfully", Toast.LENGTH_LONG).show();
-                                        progressBar.setVisibility(View.GONE);
+                                        //Toast.makeText(UserRegister.this, "User has been Registered successfully", Toast.LENGTH_LONG).show();
+                                        successfulEnter();
                                     }else{
-                                        Toast.makeText(UserRegister.this, "Failed to register, please try again", Toast.LENGTH_LONG).show();
-                                        progressBar.setVisibility(View.GONE);
+                                        Toast.makeText(UserRegister.this, "Failed to register user, please try again", Toast.LENGTH_LONG).show();
                                     }
+                                    progressBar.setVisibility(View.GONE);
                                 }
-                            });
+                            });*/
+                            //databaseReference.child("email").setValue("name");
+                            databaseReference.child("Users").child(email).setValue(name);
                         }else{
                             Toast.makeText(UserRegister.this, "Failed to register, please try again", Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
