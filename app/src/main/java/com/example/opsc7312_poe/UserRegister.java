@@ -50,12 +50,7 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
 
 
         btnRegister =(Button) findViewById(R.id.btnRegister);
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                registerUser();
-            }
-        });
+        btnRegister.setOnClickListener(this);
 
         editRegEmail=(EditText) findViewById(R.id.edtRegEmail);
         editRegPass=(EditText) findViewById(R.id.edtRegPass);
@@ -72,9 +67,9 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
             case R.id.btnBack:
                 startActivity(new Intent(this, MainActivity.class));
                 break;
-            /*case R.id.btnRegister:
+            case R.id.btnRegister:
                 registerUser();
-                break;*/
+                break;
         }
     }
 
@@ -120,6 +115,7 @@ public class UserRegister extends AppCompatActivity implements View.OnClickListe
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+
                         if(task.isSuccessful()){
                             User user =new User(name,email);
 
